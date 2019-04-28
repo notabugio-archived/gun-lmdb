@@ -29,7 +29,7 @@ export const respondToGets = (
         skipValidation: !result || skipValidation
       })
 
-      return disableRelay ? { ...msg, noRelay: true } : msg
+      return disableRelay && result ? { ...msg, noRelay: true } : msg
     } catch (err) {
       const json = {
         '#': from.msgId(),
@@ -53,9 +53,11 @@ export const acceptWrites = (Gun: any, { disableRelay = false } = {}, lmdbOpts =
   db.onIn(async function gunLmdbAcceptWrites(msg: any) {
     if (msg.fromCluster || !msg.json.put) return msg
     const diff: GunNode = await db.getDiff(msg.json.put)
-    const souls = Object.keys(diff)
+    const souls = diff && Object.keys(diff)
 
-    if (!souls.length) return msg
+    if (!souls || !souls.length) {
+      return disableRelay ? { ...msg, noRelay: true } : msg
+    }
 
     try {
       await lmdb.write(diff)
@@ -69,7 +71,7 @@ export const acceptWrites = (Gun: any, { disableRelay = false } = {}, lmdbOpts =
           ignoreLeeching: true,
           skipValidation: true
         })
-      return disableRelay ? { ...msg, noRelay: true } : msg
+      return msg
     } catch (err) {
       console.error('error writing data', err)
       const json = { '@': msg.json['#'], ok: false, err: `${err}` }
