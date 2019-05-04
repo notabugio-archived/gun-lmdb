@@ -1,6 +1,6 @@
 {
   "name": "@notabug/gun-lmdb",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "LMDB adapter for gun and gun-receiver",
   "keywords": [],
   "main": "dist/@notabug/gun-lmdb.umd.js",
