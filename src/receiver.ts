@@ -25,7 +25,7 @@ export const respondToGets = (
       const raw: string = [
         '{',
         `"#": ${JSON.stringify(from.msgId())},`,
-        `"@": ${JSON.stringify(from.msgId())},`,
+        `"@": ${JSON.stringify(dedupId)},`,
         `"put": ${put}`,
         '}'
       ].join('')
@@ -46,6 +46,7 @@ export const respondToGets = (
 
       return disableRelay && rawResult ? { ...msg, noRelay: true } : msg
     } catch (err) {
+      console.error('get err', err.stack || err)
       const json = {
         '#': from.msgId(),
         '@': dedupId,

@@ -38,9 +38,9 @@ export class GunLmdbClient {
     if (!soul) return null
     const txn = this.env.beginTxn()
     try {
-      const data = txn.getStringUnsafe(this.dbi, soul)
+      const data = this.deserialize(txn.getStringUnsafe(this.dbi, soul))
       txn.commit()
-      return this.deserialize(data)
+      return data
     } catch (e) {
       txn.abort()
       throw e
