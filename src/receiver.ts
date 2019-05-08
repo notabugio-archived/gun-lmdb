@@ -16,20 +16,35 @@ export const respondToGets = (
     if (!soul || fromCluster) return msg
 
     try {
-      const result = await lmdb.get(soul)
+      // const result = await lmdb.get(soul)
+      const rawResult = await lmdb.getRaw(soul)
+      let put = 'null'
+      if (rawResult) {
+        put = ['{', `${JSON.stringify(soul)}: ${rawResult}`, '}'].join('')
+      }
+      const raw: string = [
+        '{',
+        `"#": ${JSON.stringify(from.msgId())},`,
+        `"@": ${JSON.stringify(from.msgId())},`,
+        `"put": ${put}`,
+        '}'
+      ].join('')
+      /*
       const json = {
         '#': from.msgId(),
         '@': dedupId,
         put: result ? { [soul]: result } : null
       }
+      */
 
       from.send({
-        json,
+        raw,
+        // json,
         ignoreLeeching: true,
-        skipValidation: !result || skipValidation
+        skipValidation: !rawResult || skipValidation
       })
 
-      return disableRelay && result ? { ...msg, noRelay: true } : msg
+      return disableRelay && rawResult ? { ...msg, noRelay: true } : msg
     } catch (err) {
       const json = {
         '#': from.msgId(),

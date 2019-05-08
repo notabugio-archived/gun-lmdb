@@ -38,9 +38,22 @@ export class GunLmdbClient {
     if (!soul) return null
     const txn = this.env.beginTxn()
     try {
-      const data = txn.getString(this.dbi, soul)
+      const data = txn.getStringUnsafe(this.dbi, soul)
       txn.commit()
       return this.deserialize(data)
+    } catch (e) {
+      txn.abort()
+      throw e
+    }
+  }
+
+  async getRaw(soul: string) {
+    if (!soul) return null
+    const txn = this.env.beginTxn()
+    try {
+      const data = txn.getString(this.dbi, soul)
+      txn.commit()
+      return data || ''
     } catch (e) {
       txn.abort()
       throw e
@@ -80,7 +93,7 @@ export class GunLmdbClient {
     const nodeDataState = nodeDataMeta['>'] || {}
 
     try {
-      const existingData = txn.getString(this.dbi, soul)
+      const existingData = txn.getStringUnsafe(this.dbi, soul)
       const node = this.deserialize(existingData) || {}
       const meta = (node['_'] = node['_'] || { '#': soul, '>': {} })
       const state = (meta['>'] = meta['>'] || {})
