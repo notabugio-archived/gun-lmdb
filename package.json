@@ -1,8 +1,7 @@
 {
   "name": "@notabug/gun-lmdb",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "LMDB adapter for gun and gun-receiver",
-  "keywords": [],
   "main": "dist/@notabug/gun-lmdb.umd.js",
   "module": "dist/@notabug/gun-lmdb.es5.js",
   "typings": "dist/types/gun-lmdb.d.ts",
@@ -15,7 +14,7 @@
   "keywords": ["lmdb", "gundb"],
   "license": "MIT",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=10.0.0 && <11.0.0"
   },
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
